@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { supabase } from '../lib/supabaseClient.js'
 import { useToast } from '../hooks/useToast.jsx'
 
 export default function PublicBetsToggle({ player, onUpdated }) {
