@@ -29,16 +29,32 @@ export default function GamesList({ player, refreshTrigger }) {
 
   useEffect(() => {
     loadData()
+
+    // Realtime: qualquer mudança em games ou bets atualiza a tela sozinha
+    const channel = supabase
+      .channel('games-and-bets-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'games' }, () => {
+        loadData()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bets' }, () => {
+        loadData()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [refreshTrigger])
 
   async function loadData() {
     const [{ data: gamesData }, { data: betsData }, { data: playersData }] = await Promise.all([
       supabase.from('games').select('*').order('kickoff', { ascending: true }),
       supabase.from('bets').select('*'), // RLS já filtra o que cada um pode ver
-      supabase.from('players').select('id, nickname'),
+      supabase.from('players').select('id, nickname, bets_public'),
     ])
 
     const nicknameById = Object.fromEntries((playersData || []).map((p) => [p.id, p.nickname]))
+    const publicIds = new Set((playersData || []).filter((p) => p.bets_public).map((p) => p.id))
 
     const mine = {}
     const others = {}
@@ -52,6 +68,7 @@ export default function GamesList({ player, refreshTrigger }) {
           nickname: nicknameById[b.player_id] || '???',
           home: b.home_score_guess,
           away: b.away_score_guess,
+          isPublic: publicIds.has(b.player_id),
         })
       }
     })
@@ -164,23 +181,28 @@ export default function GamesList({ player, refreshTrigger }) {
                   )}
                 </div>
 
-                {/* Palpites de todo mundo só aparecem depois que o jogo começa */}
-                {kickoffPassed && (
-                  <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px dashed #e2e8f0' }}>
-                    <span className="muted" style={{ fontWeight: 600 }}>Palpites da turma:</span>
-                    {others.length === 0 ? (
-                      <p className="muted" style={{ margin: '4px 0 0' }}>Ninguém mais palpitou esse jogo.</p>
-                    ) : (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-                        {others.map((o, i) => (
-                          <span key={i} className="stage-tag" style={{ background: '#f1f5f9', color: '#334155' }}>
-                            {o.nickname}: {o.home} x {o.away}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                {/* Palpites de quem deixou público aparecem sempre; dos outros, só depois do jogo começar */}
+                {(() => {
+                  const visibleOthers = kickoffPassed ? others : others.filter((o) => o.isPublic)
+                  if (visibleOthers.length === 0 && !kickoffPassed) return null
+
+                  return (
+                    <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px dashed #e2e8f0' }}>
+                      <span className="muted" style={{ fontWeight: 600 }}>Palpites da turma:</span>
+                      {visibleOthers.length === 0 ? (
+                        <p className="muted" style={{ margin: '4px 0 0' }}>Ninguém mais palpitou esse jogo.</p>
+                      ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+                          {visibleOthers.map((o, i) => (
+                            <span key={i} className="stage-tag" style={{ background: '#f1f5f9', color: '#334155' }}>
+                              {o.nickname}: {o.home} x {o.away}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
             )
           })}

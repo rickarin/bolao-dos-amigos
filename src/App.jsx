@@ -5,6 +5,7 @@ import Login from './components/Login'
 import GamesList from './components/GamesList'
 import Leaderboard from './components/Leaderboard'
 import ScoringRulesView from './components/ScoringRulesView'
+import PublicBetsToggle from './components/PublicBetsToggle'
 import AdminPage from './AdminPage'
 
 function App() {
@@ -39,6 +40,9 @@ function App() {
       </header>
 
       <ScoringRulesView />
+      <div className="card">
+        <PublicBetsToggle player={player} />
+      </div>
 
       <h2 className="section-title">🏆 Ranking</h2>
       <div className="card">
