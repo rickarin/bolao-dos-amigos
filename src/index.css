@@ -1,0 +1,366 @@
+:root {
+  --primary: #009739;
+  /* verde Brasil */
+  --primary-dark: #006428;
+  --primary-light: #d8f3e2;
+  --accent: #ffdf00;
+  /* amarelo Brasil */
+  --accent-dark: #cca800;
+  --blue: #002776;
+  /* azul da bandeira */
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --bg: #f4f8f4;
+  --card: #ffffff;
+  --text: #1c2b1f;
+  --muted: #5b6b5e;
+  --border: #dce8de;
+}
+
+[data-theme='dark'] {
+  --primary: #00c853;
+  --primary-dark: #00a844;
+  --primary-light: #0f3322;
+  --accent: #ffdf00;
+  --accent-dark: #e0c200;
+  --blue: #4a6fd4;
+  --green: #22c55e;
+  --green-bg: #102a1a;
+  --bg: #0b1410;
+  --card: #142019;
+  --text: #eaf3ec;
+  --muted: #93a698;
+  --border: #25362a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+
+.app-shell {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+.app-header {
+  background: linear-gradient(135deg, var(--blue), var(--primary-dark));
+  color: white;
+  margin: 0 -16px 24px;
+  padding: 20px 24px;
+  border-radius: 0 0 16px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 4px solid var(--accent);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.app-header .user-info {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+}
+
+.btn.secondary {
+  background: var(--card);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
+}
+
+.btn.ghost {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.btn.accent {
+  background: var(--accent);
+  color: #3a2e00;
+}
+
+.btn.accent:hover {
+  background: var(--accent-dark);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  color: var(--primary-dark);
+  font-size: 18px;
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+[data-theme='dark'] .section-title {
+  color: var(--accent);
+}
+
+.day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.day-nav .day-label {
+  font-weight: 600;
+  font-size: 16px;
+  min-width: 200px;
+  text-align: center;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+[data-theme='dark'] .day-nav .day-label {
+  color: var(--accent);
+}
+
+.day-nav button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.day-nav button:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.stage-tag {
+  display: inline-block;
+  background: var(--accent);
+  color: #3a2e00;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.game-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.game-card.finished {
+  background: var(--green-bg);
+  border-color: var(--primary);
+}
+
+.game-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto 1fr;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.game-row input[type='number'] {
+  width: 42px;
+  text-align: center;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--text);
+}
+
+.team-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.result-badge {
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ranking-list li:first-child {
+  font-size: 17px;
+  color: var(--accent-dark);
+}
+
+[data-theme='dark'] .ranking-list li:first-child {
+  color: var(--accent);
+}
+
+.rules-box {
+  background: var(--primary-light);
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+input,
+select,
+button {
+  font-family: inherit;
+}
+
+select {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+}
+
+/* ===== Responsivo / Mobile ===== */
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 0 10px 32px;
+  }
+
+  .app-header {
+    margin: 0 -10px 20px;
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .app-header h1 {
+    font-size: 18px;
+  }
+
+  .day-nav {
+    gap: 8px;
+  }
+
+  .day-nav .day-label {
+    min-width: 0;
+    flex: 1;
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+
+  .day-nav button {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .game-card {
+    padding: 10px 12px;
+  }
+
+  .game-row {
+    grid-template-columns: 1fr auto auto auto 1fr;
+    gap: 4px;
+  }
+
+  .team-name {
+    font-size: 12px;
+  }
+
+  .game-row input[type='number'] {
+    width: 32px;
+    padding: 2px;
+  }
+
+  .game-row img {
+    width: 14px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    margin: 18px 0 10px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+}
