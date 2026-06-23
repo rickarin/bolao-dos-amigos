@@ -26,7 +26,7 @@ const STAGE_LABELS = {
   FINAL: 'Final',
 }
 
-function DaySummary({ gamesOfDay, myGuesses, othersBets, player }) {
+function DaySummary({ gamesOfDay, myGuesses, othersBets, player, isAdmin }) {
   const [open, setOpen] = useState(false)
 
   // Monta a lista de jogadores únicos que aparecem em algum palpite visível do dia
@@ -34,7 +34,7 @@ function DaySummary({ gamesOfDay, myGuesses, othersBets, player }) {
   playersSet.set(player.id, player.nickname)
   gamesOfDay.forEach((g) => {
     const kickoffPassed = new Date(g.kickoff) < new Date()
-    const visible = kickoffPassed ? othersBets[g.id] || [] : (othersBets[g.id] || []).filter((o) => o.isPublic)
+    const visible = kickoffPassed || isAdmin ? othersBets[g.id] || [] : []
     visible.forEach((o) => playersSet.set(o.nickname, o.nickname))
   })
   const playerNames = [...new Set(playersSet.values())]
@@ -57,7 +57,7 @@ function DaySummary({ gamesOfDay, myGuesses, othersBets, player }) {
           <tbody>
             {gamesOfDay.map((g) => {
               const kickoffPassed = new Date(g.kickoff) < new Date()
-              const visible = kickoffPassed ? othersBets[g.id] || [] : (othersBets[g.id] || []).filter((o) => o.isPublic)
+              const visible = kickoffPassed || isAdmin ? othersBets[g.id] || [] : []
               const byName = Object.fromEntries(visible.map((o) => [o.nickname, o]))
               if (myGuesses[g.id]) byName[player.nickname] = myGuesses[g.id]
 
@@ -95,7 +95,7 @@ function dayKey(dateStr) {
   return `${year}-${month}-${day}`
 }
 
-export default function GamesList({ player, refreshTrigger }) {
+export default function GamesList({ player, refreshTrigger, isAdmin }) {
   const showToast = useToast()
   const [games, setGames] = useState([])
   const [myGuesses, setMyGuesses] = useState({}) // game_id -> { home, away }
@@ -126,11 +126,10 @@ export default function GamesList({ player, refreshTrigger }) {
     const [{ data: gamesData }, { data: betsData }, { data: playersData }] = await Promise.all([
       supabase.from('games').select('*').order('kickoff', { ascending: true }),
       supabase.from('bets').select('*'), // RLS já filtra o que cada um pode ver
-      supabase.from('players').select('id, nickname, bets_public'),
+      supabase.from('players').select('id, nickname'),
     ])
 
     const nicknameById = Object.fromEntries((playersData || []).map((p) => [p.id, p.nickname]))
-    const publicIds = new Set((playersData || []).filter((p) => p.bets_public).map((p) => p.id))
 
     const mine = {}
     const others = {}
@@ -144,7 +143,6 @@ export default function GamesList({ player, refreshTrigger }) {
           nickname: nicknameById[b.player_id] || '???',
           home: b.home_score_guess,
           away: b.away_score_guess,
-          isPublic: publicIds.has(b.player_id),
         })
       }
     })
@@ -218,7 +216,7 @@ export default function GamesList({ player, refreshTrigger }) {
         <button onClick={() => setDayIndex(currentIndex + 1)} disabled={currentIndex === days.length - 1}>→</button>
       </div>
 
-      <DaySummary gamesOfDay={gamesOfDay} myGuesses={myGuesses} othersBets={othersBets} player={player} />
+      <DaySummary gamesOfDay={gamesOfDay} myGuesses={myGuesses} othersBets={othersBets} player={player} isAdmin={isAdmin} />
 
       {Object.entries(grouped).map(([stage, stageGames]) => (
         <div key={stage}>
@@ -268,9 +266,9 @@ export default function GamesList({ player, refreshTrigger }) {
                   )}
                 </div>
 
-                {/* Palpites de quem deixou público aparecem sempre; dos outros, só depois do jogo começar */}
+                {/* Palpites de todo mundo só aparecem depois que o jogo começa (admin sempre vê tudo) */}
                 {(() => {
-                  const visibleOthers = kickoffPassed ? others : others.filter((o) => o.isPublic)
+                  const visibleOthers = kickoffPassed || isAdmin ? others : []
                   if (visibleOthers.length === 0 && !kickoffPassed) return null
 
                   return (
