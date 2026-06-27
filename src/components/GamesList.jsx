@@ -12,9 +12,9 @@ function betOutcome(guess, game) {
 }
 
 const OUTCOME_STYLE = {
-  exact: { background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' },
-  winner: { background: '#fef9c3', color: '#92400e', border: '1px solid #fde68a' },
-  wrong: { background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca' },
+  exact: { background: '#22c55e', color: '#ffffff', border: '1px solid #16a34a', fontWeight: 700 },
+  winner: { background: '#f59e0b', color: '#1c1300', border: '1px solid #d97706', fontWeight: 700 },
+  wrong: { background: '#ef4444', color: '#ffffff', border: '1px solid #dc2626', fontWeight: 700 },
 }
 
 const STAGE_LABELS = {
@@ -89,6 +89,11 @@ function DaySummary({ gamesOfDay, myGuesses, othersBets, player, isAdmin }) {
 
 function dayKey(dateStr) {
   const d = new Date(dateStr)
+  // Jogos de madrugada (antes das 6h) contam como o dia anterior,
+  // pra não ficar parecendo "amanhã" quando na prática é a virada do mesmo dia de jogos
+  if (d.getHours() < 6) {
+    d.setDate(d.getDate() - 1)
+  }
   const year = d.getFullYear()
   const month = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
