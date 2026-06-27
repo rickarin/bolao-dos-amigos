@@ -4,6 +4,7 @@ import { useTheme } from './hooks/useTheme'
 import Login from './components/Login'
 import GamesList from './components/GamesList'
 import Leaderboard from './components/Leaderboard'
+import RankingChart from './components/RankingChart'
 import ScoringRulesView from './components/ScoringRulesView'
 import AdminPage from './AdminPage'
 
@@ -43,6 +44,11 @@ function App() {
       <h2 className="section-title">🏆 Ranking</h2>
       <div className="card">
         <Leaderboard />
+      </div>
+
+      <h2 className="section-title">📈 Evolução por rodada</h2>
+      <div className="card">
+        <RankingChart />
       </div>
 
       <h2 className="section-title">📅 Jogos</h2>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useToast } from '../hooks/useToast.jsx'
+import { dayKey } from '../lib/daykey.js'
 
 function betOutcome(guess, game) {
   if (game.status !== 'FINISHED' || game.home_score == null) return null
@@ -85,19 +86,6 @@ function DaySummary({ gamesOfDay, myGuesses, othersBets, player, isAdmin }) {
       </div>
     </details>
   )
-}
-
-function dayKey(dateStr) {
-  const d = new Date(dateStr)
-  // Jogos de madrugada (antes das 6h) contam como o dia anterior,
-  // pra não ficar parecendo "amanhã" quando na prática é a virada do mesmo dia de jogos
-  if (d.getHours() < 6) {
-    d.setDate(d.getDate() - 1)
-  }
-  const year = d.getFullYear()
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 export default function GamesList({ player, refreshTrigger, isAdmin }) {
