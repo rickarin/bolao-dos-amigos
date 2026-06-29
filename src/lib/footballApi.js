@@ -50,8 +50,8 @@ async function fetchAndMapMatches() {
     kickoff: m.utcDate,
     stage: m.stage,
     status: m.status,
-    home_score: m.score?.fullTime?.home ?? null,
-    away_score: m.score?.fullTime?.away ?? null,
+    home_score: m.score?.regularTime?.home ?? m.score?.fullTime?.home ?? null,
+    away_score: m.score?.regularTime?.away ?? m.score?.fullTime?.away ?? null,
     updated_at: new Date().toISOString(),
   }))
 }
