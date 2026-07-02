@@ -89,3 +89,5 @@ async function fetchAndMapMatches() {
     }
   })
 }
+
+console.log('Exemplo jogo:', JSON.stringify(data.matches.find(m => m.homeTeam?.name === 'Belgium'), null, 2))
